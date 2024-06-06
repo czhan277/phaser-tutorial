@@ -28,13 +28,25 @@
 
     //instance of Phaser.Game object
     var game = new Phaser.Game(config); //local var = new object(param)
-S
-    function preload ()
+
+    function preload () //load 5 assets
     {
+        this.load.image('sky', 'assets/sky.png'); //'sky' is the asset key
+        this.load.image('ground', 'assets/platform.png'); //key links to loaded asset
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        this.load.spritesheet('dude',
+            'assets/dude.png',
+            { frameWidth: 32, frameHeight: 48 }
+        );
     }
 
     function create ()
     {
+        //game objects are positioned based on their center by default
+        //game objects are displayed based on order, first is background
+        this.add.image(400, 300, 'sky'); //display loaded image at x and y coordinates
+        this.add.image(400, 300, 'star');
     }
 
     function update ()
