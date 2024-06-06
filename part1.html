@@ -14,19 +14,21 @@
 
 <script type="text/javascript">
 
+    //config object configures phaser game
     var config = {
-        type: Phaser.AUTO,
-        width: 800,
-        height: 600,
-        scene: {
+        type: Phaser.AUTO, //renderer, default rendering context is Phaser.WEBGL
+        width: 800, //dimensions, size of canvas element in pixels
+        height: 600, //dimensions, size of canvas element in pixels
+        scene: { //default scene
             preload: preload,
             create: create,
             update: update
         }
     };
 
-    var game = new Phaser.Game(config);
-
+    //instance of Phaser.Game object
+    var game = new Phaser.Game(config); //local var = new object(param)
+S
     function preload ()
     {
     }
