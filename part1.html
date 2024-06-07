@@ -56,8 +56,6 @@
          * 
          * camera systems controls view into scene, active camera can move and zoom
         */
-        //
-        //
 
         //create new image game object and add to scene display list
         this.add.image(400, 300, 'sky'); //display loaded image at x and y coordinates
@@ -132,10 +130,41 @@
 
         //collider object monitors two physicial pbjects or groups for collision or overlap
         this.physics.add.collider(player, platforms);
+
+        //phaser has built-in keyboard manager
+        //populates cursors object with 4 properties: up, down, left, right
+        //these properties are instances of key objects, poll in update
+        cursors = this.input.keyboard.createCursorKeys();
     }
 
     function update ()
     {
+        //clearing and setting velocity every frame creates 'stop-start' style of movement
+        //plauer sprite only moves if key is held down, stop if not
+        if (cursors.left.isDown) //check if left key is held down
+        {
+            player.setVelocityX(-160); //negative horizontal velocity
+
+            player.anims.play('left', true); //start left running animation
+        }
+        else if (cursors.right.isDown) //check if right key is held down
+        {
+            player.setVelocityX(160); //positive horizontal velocity
+
+            player.anims.play('right', true); //start right running animation
+        }
+        else //check if no key is held down
+        {
+            player.setVelocityX(0); //clear horizontal velocity
+
+            player.anims.play('turn'); //turn animation
+        }
+
+        if (cursors.up.isDown && player.body.touching.down) //no jumping while mid-air
+        {
+            player.setVelocityY(-500); //vertical velocity of 330 px/sec sq
+            //player automatically falls to ground because gracity
+        }
     }
 
 </script>
