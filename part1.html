@@ -35,10 +35,12 @@
 
     var player;
     var stars;
+    var bombs;
     var platforms;
     var cursors;
     var score = 0; //score for collecting stars
     var scoreText; //text object
+    var gameOver = false; //game is not over by default
 
     //instance of Phaser.Game object
     var game = new Phaser.Game(config); //local var = new object(param)
@@ -152,7 +154,7 @@
             //step space out children, first child at 12 x 0, second at 82 x 0
         });
 
-        stars.children.iterate(function (child) { //iterate all children in ground
+        stars.children.iterate(function (child) { //iterate all children in group
             //bounce range: 0 = no bounce, 1 = full bounce
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)); //random Y bounce
             //gravity pulls down stars until they collide with platforms
@@ -165,6 +167,14 @@
         //display text at 16 x 16 with default string 'score: 0'
         //font size and fill color object, default font courier
         scoreText = this.add.text(16, 16, 'score: 0', { frontSize: '32px', fill: '#000' });
+
+        //release a bomb to randomly bounce around each time level is cleared
+        //player get high score without dying
+        bombs = this.physics.add.group();
+
+        this.physics.add.collider(bombs, platforms); //bombs bounce off platforms
+        //check if player collides with any bomb, if so passed to hitBomb function
+        this.physics.add.collider(player, bombs, hitBomb, null, this);
     }
 
     function update ()
@@ -203,6 +213,33 @@
         
         score += 10; //update score
         scoreText.setText('Score: ' + score); //update text
+
+        if (stars.countActive(true) == 0) //if no stars are left, player has collected them all (cleared level)
+        {
+            stars.children.iterate(function (child) { //iterate all stars in group
+                //re-enable all stars and reset y position to 0, making all stars drop from top
+                child.enableBody(true, child.x, 0, true, true);
+
+            });
+            
+            //pick random x to spawn bomb at opposite side of player to give them a chance
+            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            //bomb sprite rebounds around screen
+            var bomb = bombs.create(x, 16, 'bomb'); //create bomb
+            bomb.setBounce(1); //full bounce
+            bomb.setCollideWorldBounds(true); //collide with world bounds
+            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20); //random velocity
+        }
+    }
+
+    function hitBomb (player, bomb) {
+        this.physics.pause(); //stop the game
+
+        player.setTint(0xff0000); //player turns red
+
+        player.anims.play('turn');
+
+        gameOver = true; //player dies
     }
 
 </script>
