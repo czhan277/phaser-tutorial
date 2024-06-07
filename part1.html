@@ -33,6 +33,13 @@
         }
     };
 
+    var player;
+    var stars;
+    var platforms;
+    var cursors;
+    var score = 0; //score for collecting stars
+    var scoreText; //text object
+
     //instance of Phaser.Game object
     var game = new Phaser.Game(config); //local var = new object(param)
 
@@ -154,6 +161,10 @@
         this.physics.add.collider(stars, platforms); //prevent stars from falling through
         //check if player overlaps with any star, if so passed to collectStar function
         this.physics.add.overlap(player, stars, collectStar, null, this);
+
+        //display text at 16 x 16 with default string 'score: 0'
+        //font size and fill color object, default font courier
+        scoreText = this.add.text(16, 16, 'score: 0', { frontSize: '32px', fill: '#000' });
     }
 
     function update ()
@@ -189,7 +200,9 @@
     function collectStar (player, star) {
         //parent game object made inactive and invisible, removed from display
         star.disableBody(true, true); //disable star physics body
-            
+        
+        score += 10; //update score
+        scoreText.setText('Score: ' + score); //update text
     }
 
 </script>
