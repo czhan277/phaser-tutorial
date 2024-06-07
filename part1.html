@@ -47,18 +47,44 @@
 
     function create ()
     {
-        //game objects are positioned based on their center by default
-        //game objects are displayed based on order, first is background
+        /**
+         * game objects are positioned based on their center by default
+         * game objects are displayed based on order, first is background
+         * 
+         * game objects off screen (outside 0x0 to 800x600) still exist within scene
+         * scene has no fixed size and extends infinitely in all directions
+         * 
+         * camera systems controls view into scene, active camera can move and zoom
+        */
+        //
+        //
+
         //create new image game object and add to scene display list
-        //game objects off screen (outside 0x0 to 800x600) still exist within scene
-        //scene has no fixed size and extends infinitely in all directions
-        //camera systems controls view into scene, active camera can move and zoom
         this.add.image(400, 300, 'sky'); //display loaded image at x and y coordinates
         
-        platforms = this.physics.add.staticGroup(); //use arcade physics system
+        /**
+         * 2 types of physical body in arcade physics, dynamic and static
+         * 
+         * dynamic body can more around via forces (velocity, acceleration)
+         * dynamic body can bounce and collide with other objects influenced by mass
+         * 
+         * static body has position and size, not affected by gracity or velocity
+         * static body does not move upon collision
+         * 
+         * group groups similar objects together to control as one unit
+         * groups can create own game objects, can check for collision as group
+         * 
+         * physics group auto creates physics enabled children
+        */
 
-        platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+        //create platform group, use to create platforms from imported 'ground' image
+        platforms = this.physics.add.staticGroup(); //local var = new static physics group
 
+        //span full width of game to prevent player falling off
+        //image scaled from 400 x 32 pixels to 800 x 64
+        //refresh body tells physics world about changes to static physics body
+        platforms.create(400, 568, 'ground').setScale(2).refreshBody(); //ground
+        //3 platforms
         platforms.create(600, 400, 'ground');
         platforms.create(50, 250, 'ground');
         platforms.create(750, 220, 'ground');
