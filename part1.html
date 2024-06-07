@@ -88,18 +88,27 @@
         platforms.create(600, 400, 'ground');
         platforms.create(50, 250, 'ground');
         platforms.create(750, 220, 'ground');
+
         //create physics sprite player at 100 x 450 pixels from bottom of game
         //sprite created via physics game object factory is dynamic physics body by default
         player = this.physics.add.sprite(100, 450, 'dude');
 
         player.setBounce(0.2); //slight bounce when landing after jumping
         player.setCollideWorldBounds(true); //collides with world bounds (game dimensions)
+
+        /**
+         * physics sprite has body property reference to arcade physics body
+         * represents sprite as physical body in arcade physics engine
+        */
+        player.body.setGravityY(300); //simulate gravity on sprite
+
         /**
          * animation manager is a global system,
          * animations created within are globally available to all game objects
          * share base animation data and manage own timelines
          * define single animation once to apply to many game objects
         */
+
         //create animations for physics sprite
         this.anims.create({ //left animation, 4 frames for running left
             key: 'left',
@@ -120,6 +129,9 @@
             frameRate: 10,
             repeat: -1
         });
+
+        //collider object monitors two physicial pbjects or groups for collision or overlap
+        this.physics.add.collider(player, platforms);
     }
 
     function update ()
