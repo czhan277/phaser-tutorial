@@ -19,6 +19,13 @@
         type: Phaser.AUTO, //renderer, default rendering context is Phaser.WEBGL
         width: 800, //dimensions, size of canvas element in pixels
         height: 600, //dimensions, size of canvas element in pixels
+        physics: { //tell phaser game requires arcade physics system
+            default: 'arcade',
+            arcade: {
+                gravity: { y : 300},
+                debug: false
+            }
+        },
         scene: { //default scene
             preload: preload,
             create: create,
@@ -35,18 +42,26 @@
         this.load.image('ground', 'assets/platform.png'); //key links to loaded asset
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('dude',
-            'assets/dude.png',
-            { frameWidth: 32, frameHeight: 48 }
-        );
+        this.load.spritesheet('dude','assets/dude.png',{ frameWidth: 32, frameHeight: 48 });
     }
 
     function create ()
     {
         //game objects are positioned based on their center by default
         //game objects are displayed based on order, first is background
+        //create new image game object and add to scene display list
+        //game objects off screen (outside 0x0 to 800x600) still exist within scene
+        //scene has no fixed size and extends infinitely in all directions
+        //camera systems controls view into scene, active camera can move and zoom
         this.add.image(400, 300, 'sky'); //display loaded image at x and y coordinates
-        this.add.image(400, 300, 'star');
+        
+        platforms = this.physics.add.staticGroup(); //use arcade physics system
+
+        platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+        platforms.create(600, 400, 'ground');
+        platforms.create(50, 250, 'ground');
+        platforms.create(750, 220, 'ground');
     }
 
     function update ()
