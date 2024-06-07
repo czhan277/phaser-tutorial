@@ -22,7 +22,7 @@
         physics: { //tell phaser game requires arcade physics system
             default: 'arcade',
             arcade: {
-                gravity: { y : 300},
+                gravity: { y : 300 },
                 debug: false
             }
         },
@@ -117,7 +117,7 @@
 
         this.anims.create({ //1 frame for facing camera
             key: 'turn',
-            frames: [ { key: 'dude', frame: 4} ],
+            frames: [ { key: 'dude', frame: 4 } ],
             frameRate: 20
         });
 
@@ -135,6 +135,25 @@
         //populates cursors object with 4 properties: up, down, left, right
         //these properties are instances of key objects, poll in update
         cursors = this.input.keyboard.createCursorKeys();
+
+        //create star group, dynamic so stars can move and bounce
+        //groups can take configurations objects for setting up all children
+        stars = this.physics.add.group({
+            key: 'star', //texture key is star image
+            repeat: 11, //automatically creates 1 child by default + 11 = 12 stars
+            setXY: { x: 12, y: 0, stepX: 70 } //set position of 12 children
+            //step space out children, first child at 12 x 0, second at 82 x 0
+        });
+
+        stars.children.iterate(function (child) { //iterate all children in ground
+            //bounce range: 0 = no bounce, 1 = full bounce
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)); //random Y bounce
+            //gravity pulls down stars until they collide with platforms
+        });
+
+        this.physics.add.collider(stars, platforms); //prevent stars from falling through
+        //check if player overlaps with any star, if so passed to collectStar function
+        this.physics.add.overlap(player, stars, collectStar, null, this);
     }
 
     function update ()
@@ -165,6 +184,12 @@
             player.setVelocityY(-500); //vertical velocity of 330 px/sec sq
             //player automatically falls to ground because gracity
         }
+    }
+
+    function collectStar (player, star) {
+        //parent game object made inactive and invisible, removed from display
+        star.disableBody(true, true); //disable star physics body
+            
     }
 
 </script>
